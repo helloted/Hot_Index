@@ -7,15 +7,14 @@ url = 'http://s.weibo.com/top/summary'
 def sniff_url():
     response = requests.get(url, headers=heads)
 
-    # print response.text
-    # <\/a>
-    pattern = re.compile('<tr action[\s\S]*?realtimehot[\s\S]*?>(.*?)<\\\/a>[\s\S]*?tr>', re.S)
+
+    # pattern = re.compile('<tr action[\s\S]*?realtimehot[\s\S]*?>(.*?)<\\\/a>[\s\S]*?tr>', re.S)
+    pattern = re.compile('<tr action[\s\S]*?realtimehot[\s\S]*?>(.*?)<\\\/a>[\s\S]*?<span>(.*?)<[\s\S]*?tr>', re.S)
     items = re.findall(pattern, response.text)
-    print 'finish'
 
     for item in items:
-        print '=================='
-        print item.decode("unicode-escape")
+        print item[0].decode("unicode-escape"),item[1]
+        # print item.decode("unicode-escape")
 
 
 # def try_pattern():
