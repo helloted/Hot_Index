@@ -17,7 +17,6 @@ def sniff_url():
         print item[0].decode("unicode-escape"),item[1]
         # print item.decode("unicode-escape")
 
-    print time.time()
 
 
 # def try_pattern():
