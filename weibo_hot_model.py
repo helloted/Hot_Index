@@ -6,9 +6,9 @@ from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 
 user = 'root'
-password = 'sql$HeF#pass'
+password = 'CHZ_Server_0'
 port = '3306'
-database_name = 'server'
+database_name = 'hot_index'
 char = 'utf8'
 
 data_url = 'mysql+pymysql://{user}:{password}@localhost:{port}/{database_name}'.format(**locals())
