@@ -3,7 +3,7 @@ import re
 import time
 import hashlib
 from bs4 import BeautifulSoup
-from baidu_hot_model import Session,BaiduHot
+from hot_model import Session,HotModel
 
 
 heads = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'}
@@ -40,9 +40,10 @@ def insert_to_DB(title,index,rank):
         print e
     else:
         session = Session()
-        regular_hot = session.query(BaiduHot).filter(BaiduHot.title_md5==title_md5).first()
+        regular_hot = session.query(HotModel).filter(HotModel.title_md5==title_md5).first()
 
-        hot = BaiduHot()
+        hot = HotModel()
+        hot.type = 2
         hot.title = title
         hot.time = int(time.time())
         hot.title_md5 = title_md5
@@ -51,8 +52,10 @@ def insert_to_DB(title,index,rank):
 
         if regular_hot and regular_hot.init_time:
             hot.init_time = regular_hot.init_time
+            hot.continued_time = hot.time - hot.init_time
         else:
             hot.init_time = int(time.time())
+            hot.continued_time = 0
 
         if regular_hot and regular_hot.index and regular_hot.index != 0 and hot.index:
             hot.increase = (hot.index-regular_hot.index) / float(regular_hot.index)
