@@ -2,20 +2,32 @@ import requests
 import re
 import time
 import hashlib
-from hot_model import HotModel,Session
+from bs4 import BeautifulSoup
+from hot_model import Session,HotModel
 
 
 heads = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.94 Safari/537.36'}
-url = 'http://s.weibo.com/top/summary'
+url = 'http://top.baidu.com/buzz?b=1&c=513&fr=topbuzz_b342_c513'
 
 
 def sniff_url():
     response = requests.get(url, headers=heads)
-    pattern = re.compile('<tr action[\s\S]*?realtimehot[\s\S]*?>(.*?)<\\\/a>[\s\S]*?<span>(.*?)<[\s\S]*?tr>', re.S)
-    items = re.findall(pattern, response.text)
+    soup = BeautifulSoup(response.content, 'lxml')
 
-    for i,item in enumerate(items):
-        title = item[0].decode("unicode-escape")
+    temp_list = []
+    for i,index in enumerate(soup.find_all(class_='last')):
+        if i > 1:
+            temp_list.append(int(index.text))
+
+    item_dict = {}
+    for i,title in enumerate(soup.find_all(class_='list-title')):
+        key = title.text
+        value = temp_list[i]
+        item_dict[key] = value
+
+    result = sorted(item_dict.items(), key=lambda d: d[1], reverse=True)
+    for i,item in enumerate(result):
+        title = item[0]
         index = item[1]
         insert_to_DB(title,index,i+1)
 
@@ -31,7 +43,7 @@ def insert_to_DB(title,index,rank):
         regular_hot = session.query(HotModel).filter(HotModel.title_md5==title_md5).first()
 
         hot = HotModel()
-        hot.type = 1
+        hot.type = 2
         hot.title = title
         hot.time = int(time.time())
         hot.title_md5 = title_md5
@@ -40,7 +52,7 @@ def insert_to_DB(title,index,rank):
 
         if regular_hot and regular_hot.init_time:
             hot.init_time = regular_hot.init_time
-            hot.continued_time = hot.time -hot.init_time
+            hot.continued_time = hot.time - hot.init_time
         else:
             hot.init_time = int(time.time())
             hot.continued_time = 0
@@ -62,6 +74,8 @@ def get_md5(s):
     m = hashlib.md5()
     m.update(s)
     return m.hexdigest()
+
+
 
 if __name__ == '__main__':
     sniff_url()
