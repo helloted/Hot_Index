@@ -8,4 +8,5 @@ url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxcb27f70254f4a
 
 if __name__ == '__main__':
     resp =  requests.get(url,headers=headers)
+    print resp
     print resp.content
