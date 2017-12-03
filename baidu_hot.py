@@ -10,6 +10,9 @@ heads = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (
 url = 'http://top.baidu.com/buzz?b=1&c=513&fr=topbuzz_b342_c513'
 
 
+
+
+
 def sniff_url():
     response = requests.get(url, headers=heads)
     soup = BeautifulSoup(response.content, 'lxml')
