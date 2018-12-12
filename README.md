@@ -1,2 +1,2 @@
-# Hot_Index
-热门指数统计
+# Python
+Python一些小案例
